@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { AccountButton } from "@/components/account-button";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -16,6 +16,7 @@ import {
 } from "@/lib/types";
 import { useSpeech } from "@/components/use-speech";
 import { useRecorder } from "@/components/use-recorder";
+import { useBrowserRecorder } from "@/components/use-browser-recorder";
 import { runFishAgentRequest } from "@/lib/fish-agent-client";
 import { createNativeVoice, type NativeVoiceStatus } from "@/lib/native-voice-client";
 import { createNativeGuidance } from "@/lib/native-guidance-client";
@@ -53,6 +54,16 @@ const levels: { id: Level; label: string }[] = [
 
 function UserMessage({ text, translation }: { text: string; translation?: string }) {
   return <div className="chat-row user-row"><div className="message user-message"><span className="message-label">You</span><div className="user-bubble"><p className="user-text" dir="auto">{text}</p>{translation && translation.trim() !== text.trim() && <p className="user-translation" lang="en" dir="ltr">{translation}</p>}</div></div><UserAvatar /></div>;
+}
+
+type SpeechEngine = "fish" | "browser";
+function readSpeechEngine(): SpeechEngine {
+  try { return localStorage.getItem("naga-stt") === "browser" ? "browser" : "fish"; } catch { return "fish"; }
+}
+function subscribeSpeechEngine(onChange: () => void) {
+  window.addEventListener("naga-stt", onChange);
+  window.addEventListener("storage", onChange);
+  return () => { window.removeEventListener("naga-stt", onChange); window.removeEventListener("storage", onChange); };
 }
 
 export default function TutorApp() {
@@ -104,7 +115,11 @@ export default function TutorApp() {
   const [responseLanguageError, setResponseLanguageError] = useState("");
   const [optionsTranslating, setOptionsTranslating] = useState(false);
   const speech = useSpeech();
-  const recorder = useRecorder();
+  const sttEngine = useSyncExternalStore(subscribeSpeechEngine, readSpeechEngine, () => "fish" as const);
+  const changeEngine = (next: SpeechEngine) => { try { localStorage.setItem("naga-stt", next); } catch { /* The choice applies for this visit. */ } window.dispatchEvent(new Event("naga-stt")); };
+  const fishRecorder = useRecorder();
+  const browserRecorder = useBrowserRecorder();
+  const recorder = sttEngine === "browser" ? browserRecorder : fishRecorder;
   const request = useRef<AbortController | null>(null);
   const responseLanguageRequest = useRef<AbortController | null>(null);
   const statusRequest = useRef<AbortController | null>(null);
@@ -630,6 +645,7 @@ export default function TutorApp() {
           {activeLesson && <label>Lesson language<select value={language} disabled={working || recording} onChange={(event) => { changeContext(); setLanguage(event.target.value as LanguageId); }}>{languages.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>}
           {isConversation && <><label>Level<select value={level} disabled={working || recording} onChange={(event) => { changeContext(); setLevel(event.target.value as Level); }}>{levels.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}</select></label><label>Conversation topic<select value={topic} disabled={working || recording} onChange={(event) => { changeContext(); setTopic(event.target.value as TopicId); }}>{topics.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label></>}
           <label>{isConversation ? "Your guide" : "Voice"}<select value={tutor} disabled={working || recording} onChange={(event) => { changeContext(); setTutor(event.target.value as TutorId); }}>{tutors.map((item) => <option key={item.id} value={item.id}>{item.name} · {item.description}</option>)}</select></label>
+          <label>Speech to text<select value={sttEngine} disabled={recording} onChange={(event) => changeEngine(event.target.value as SpeechEngine)}><option value="fish">Fish Audio (uses credits)</option><option value="browser">Browser (free)</option></select></label>
           {isConversation && conversationStarted && <p>Changing these starts a fresh conversation.</p>}
         </section>}
 
