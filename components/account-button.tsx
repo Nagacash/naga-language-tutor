@@ -29,9 +29,11 @@ export function AccountButton() {
       aria-label={`Sign out ${email}`}
       title={`Signed in as ${email}`}
       onClick={async () => {
-        await authClient.signOut();
-        router.push("/");
+        const { error } = await authClient.signOut();
+        if (error) console.error("Sign-out failed", error.message);
+        setEmail(null);
         router.refresh();
+        router.push("/");
       }}
     >
       Sign out
