@@ -4,7 +4,7 @@ import "@fontsource-variable/manrope";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Sona · Find your words",
+  title: "Naga Vox · Find your words",
   description: "A little language practice, one real conversation at a time.",
 };
 

@@ -14,7 +14,7 @@ const acceptedTypes = new Set([
 ]);
 
 export async function POST(request: Request) {
-  if (!sameOrigin(request)) return safeError("Open this practice from Sona.", 403);
+  if (!sameOrigin(request)) return safeError("Open this practice from Naga Vox.", 403);
   if (!isFishReady()) return safeError("The voice connection needs setup.", 503);
   const contentType = request.headers.get("Content-Type") ?? "";
   if (!contentType.toLowerCase().startsWith("multipart/form-data"))

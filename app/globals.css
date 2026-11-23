@@ -49,6 +49,9 @@ details[open] > summary > svg { transform: rotate(180deg); }
 .brand { display: inline-flex; align-items: center; gap: 8px; font-family: "Manrope Variable", sans-serif; font-size: 31px; font-weight: 750; letter-spacing: -1.6px; }
 .brand-symbol { width: 33px; height: 37px; background: var(--sage); color: var(--accent); border-radius: 14px 14px 14px 4px; display: grid; place-items: center; }
 .brand-dot { color: var(--terracotta); margin-left: -8px; }
+.brand-logo-img { display: block; height: 56px; width: auto; }
+:root[data-theme="dark"] .brand-logo-img { filter: invert(1); }
+@media (max-width: 700px) { .brand-logo-img { height: 44px; } }
 .main-tabs { display: flex; gap: 4px; background: light-dark(#f3f6f3, #253225); border-radius: 24px; padding: 4px; }
 .main-tabs button { border: 0; border-radius: 20px; background: transparent; color: var(--muted); padding: 10px 20px; font-size: 13px; font-weight: 550; }
 .main-tabs button.active { background: light-dark(#fff, #1b221e); color: var(--accent-dark); box-shadow: 0 1px 5px #20362812, 0 0 0 1px #20362805; }

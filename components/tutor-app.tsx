@@ -4,7 +4,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
 import {
-  ArrowLeft, ArrowRight, AudioLines,
+  ArrowLeft, ArrowRight,
   LoaderCircle, Mic, RefreshCw, Send, SlidersHorizontal,
   Square, X,
 } from "lucide-react";
@@ -605,7 +605,7 @@ export default function TutorApp() {
   return (
     <div className={"app-page" + (activeLesson ? (continuousChat ? " active-lesson continuous-lesson" : " active-lesson") : isConversation ? " setup-lesson" : " translate-lesson")}>
       <header className="site-header">
-        <Link href="/" className="brand" aria-label="Sona home"><span className="brand-symbol"><AudioLines size={22} /></span>sona<span className="brand-dot">.</span></Link>
+        <Link href="/" className="brand brand-logo" aria-label="Naga Vox home"><img src="/naga-vox-logo.png" alt="Naga Vox" className="brand-logo-img" /></Link>
         <nav className="main-tabs" aria-label="Learning mode">
           <button className={tab === "practice" ? "active" : ""} aria-pressed={tab === "practice"} onClick={() => changeTab("practice")}>Conversation (turns)</button>
           <button className={tab === "say" ? "active" : ""} aria-pressed={tab === "say"} onClick={() => changeTab("say")}>Translate</button>
