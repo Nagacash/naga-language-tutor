@@ -1337,3 +1337,5 @@ html[data-theme="light"] .app-page::before {
 .billing-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
 .billing-actions .landing-cta { margin: 0; }
 .billing-message { color: #f2b8a8; width: 100%; }
+.landing-plans { margin-top: 40px; }
+.landing-plans .billing-actions { justify-content: center; }

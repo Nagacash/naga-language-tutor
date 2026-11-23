@@ -16,6 +16,10 @@ export function BillingButtons({ subscribed }: { subscribed: boolean }) {
         headers: { "content-type": "application/json" },
         body: JSON.stringify(body),
       });
+      if (response.status === 401) {
+        window.location.href = "/auth/sign-in";
+        return;
+      }
       const data = (await response.json().catch(() => ({}))) as { url?: string; error?: string };
       if (!response.ok || !data.url) {
         setMessage(data.error ?? "Billing is not available right now.");

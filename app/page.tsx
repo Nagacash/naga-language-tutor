@@ -1,7 +1,21 @@
 import Link from "next/link";
 import { AccountButton } from "@/components/account-button";
+import { BillingButtons } from "@/components/billing-buttons";
+import { sessionUser } from "@/lib/auth/session";
+import { neonStore } from "@/lib/billing/store";
 
-export default function Landing() {
+export const dynamic = "force-dynamic";
+
+export default async function Landing() {
+  const user = await sessionUser();
+  let subscribed = false;
+  if (user) {
+    try {
+      subscribed = !!(await neonStore().activeSubscriptionFor(user.id));
+    } catch {
+      subscribed = false;
+    }
+  }
   return (
     <main className="landing">
       <header className="landing-header">
@@ -17,6 +31,10 @@ export default function Landing() {
         <div className="landing-actions">
           <Link href="/app" className="landing-cta">Start practicing</Link>
           <Link href="/account" className="landing-secondary">Plans and account</Link>
+        </div>
+        <div className="landing-plans">
+          <p className="landing-kicker">{subscribed ? "Your plan is active" : "Unlock full practice"}</p>
+          <BillingButtons subscribed={subscribed} />
         </div>
       </section>
     </main>
