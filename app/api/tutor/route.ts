@@ -1,3 +1,4 @@
+import { apiAccessDenied } from "@/lib/access";
 import { readJson, safeError, sameOrigin } from "@/lib/guard";
 import { tutorReply } from "@/lib/tutor";
 import { parseTutorInput, TutorError } from "@/lib/tutor-contract";
@@ -7,6 +8,8 @@ export const maxDuration = 90;
 
 export async function POST(request: Request) {
   if (!sameOrigin(request)) return safeError("Use the tutor from this app.", 403);
+  const denied = await apiAccessDenied();
+  if (denied) return denied;
   try {
     const body = await readJson(request, 65536);
     const input = parseTutorInput(body);

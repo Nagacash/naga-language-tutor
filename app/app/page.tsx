@@ -1,11 +1,12 @@
 import { redirect } from "next/navigation";
 import TutorApp from "@/components/tutor-app";
-import { sessionUserId } from "@/lib/auth/session";
+import { accessFor } from "@/lib/access";
 
 export const dynamic = "force-dynamic";
 
-// The practice app is for signed-in users. Everyone else starts on the landing page.
+// The practice app is for admins and subscribers. Everyone else is sent to sign-in or to plans.
 export default async function AppPage() {
-  if (!(await sessionUserId())) redirect("/auth/sign-in");
+  const access = await accessFor();
+  if (!access.ok) redirect(access.reason === "signed-out" ? "/auth/sign-in" : "/account");
   return <TutorApp />;
 }

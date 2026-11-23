@@ -1,3 +1,4 @@
+import { apiAccessDenied } from "@/lib/access";
 import { readJson, safeError, sameOrigin } from "@/lib/guard";
 import { parseNativeGuidanceInput } from "@/lib/native-voice-contract";
 import { persistentGuidanceTurn } from "@/lib/tutor";
@@ -7,6 +8,8 @@ export const runtime = "nodejs";
 
 export async function POST(request: Request) {
   if (!sameOrigin(request)) return safeError("Use speaking guidance from this app.", 403);
+  const denied = await apiAccessDenied();
+  if (denied) return denied;
   try {
     const body = await readJson(request, 65536);
     if (!body.input || typeof body.input !== "object" || Array.isArray(body.input))

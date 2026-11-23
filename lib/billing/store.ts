@@ -107,3 +107,8 @@ export function neonStore(): BillingStore {
     },
   };
 }
+
+// Shared database access for the access check. Only use it for read queries.
+export async function appQuery<T extends object>(text: string, values: unknown[]) {
+  return db().query<T>(text, values);
+}
