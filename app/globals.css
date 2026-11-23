@@ -13,16 +13,16 @@
 }
 html[data-theme="dark"] {
   color-scheme: dark;
-  --paper: #101713;
-  --white: #18211b;
-  --ink: #e4eee7;
-  --muted: #a6b5ab;
-  --line: #33453a;
-  --accent: #8bcea7;
-  --accent-dark: #b2e1c4;
-  --on-accent: #10291b;
-  --sage: #1c2c22;
-  --terracotta: #a4bda8;
+  --paper: #0a0812;
+  --white: #100d1a;
+  --ink: #e7e6e7;
+  --muted: #9b9aa3;
+  --line: #2a2832;
+  --accent: #02ce70;
+  --accent-dark: #00ff88;
+  --on-accent: #000000;
+  --sage: #09211e;
+  --terracotta: #cdbc77;
 }
 
 * { box-sizing: border-box; }
@@ -1279,3 +1279,26 @@ html[data-theme="dark"] .vc-talk-button.recording { color: #fff; }
   .tw-source-editor { font-size: 18px; }
   .tw-source-editor > .tw-source-text, .tw-source-highlight { padding: 16px; }
 }
+
+/* Landing background: soft brand glow with a faint naga-scale pattern. */
+.app-page { position: relative; isolation: isolate; min-height: 100vh; }
+.app-page::before {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(circle at 8% 0%, #e3eee5 0, transparent 42%),
+    radial-gradient(circle at 92% 100%, #f7e7e0 0, transparent 40%),
+    url("/bg-scales.svg");
+}
+html[data-theme="dark"] .app-page::before {
+  background:
+    radial-gradient(circle at 8% 0%, #09211e 0, transparent 42%),
+    radial-gradient(circle at 92% 100%, #2b2410 0, transparent 40%),
+    url("/bg-scales-dark.svg");
+}
+.app-page > .site-header {
+  background: color-mix(in srgb, var(--paper) 82%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.brand-logo-img { height: 64px; }
+@media (max-width: 700px) { .brand-logo-img { height: 48px; } }
