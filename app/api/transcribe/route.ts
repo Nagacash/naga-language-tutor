@@ -39,8 +39,10 @@ export async function POST(request: Request) {
     return safeError("Use a WebM, MP4, WAV or Ogg audio recording.");
   try {
     const response = await transcribeRecording(audio, language, request.signal);
-    if (!response.ok)
+    if (!response.ok) {
+      console.error("Transcription upstream status:", response.status);
       return safeError("The recording could not be transcribed. Please try again.", 502);
+    }
     const result = await response.json();
     if (typeof result.text !== "string")
       return safeError("The transcript was unavailable. Please try again.", 502);
