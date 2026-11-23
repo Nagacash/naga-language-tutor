@@ -1,3 +1,4 @@
+import { quotaDenied } from "@/lib/usage";
 import { apiAccessDenied } from "@/lib/access";
 import { readJson, safeError, sameOrigin } from "@/lib/guard";
 import { nativeVoiceSession } from "@/lib/tutor";
@@ -11,6 +12,8 @@ export async function POST(request: Request) {
   if (!sameOrigin(request)) return safeError("Start voice practice from this app.", 403);
   const denied = await apiAccessDenied();
   if (denied) return denied;
+  const overAllowance = await quotaDenied("chat_sessions", 1);
+  if (overAllowance) return overAllowance;
   try {
     const input = parseNativeVoiceInput(await readJson(request, 8192));
     return Response.json(await nativeVoiceSession(input, request.signal), { headers: { "Cache-Control": "no-store" } });

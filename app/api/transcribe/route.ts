@@ -1,3 +1,4 @@
+import { quotaDenied } from "@/lib/usage";
 import { apiAccessDenied } from "@/lib/access";
 import { isFishReady, MAX_RECORDING_BYTES, transcribeRecording } from "@/lib/fish";
 import { boundedBody, safeError, sameOrigin } from "@/lib/guard";
@@ -18,6 +19,8 @@ export async function POST(request: Request) {
   if (!sameOrigin(request)) return safeError("Open this practice from Naga Vox.", 403);
   const denied = await apiAccessDenied();
   if (denied) return denied;
+  const overAllowance = await quotaDenied("recordings", 1);
+  if (overAllowance) return overAllowance;
   if (!isFishReady()) return safeError("The voice connection needs setup.", 503);
   const contentType = request.headers.get("Content-Type") ?? "";
   if (!contentType.toLowerCase().startsWith("multipart/form-data"))
