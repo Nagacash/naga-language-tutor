@@ -16,3 +16,6 @@ verification/
 verification-*
 test-results/
 playwright-report/
+
+# Backup files left by sed -i in local setup steps
+*.bak
