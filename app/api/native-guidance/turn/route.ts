@@ -1,3 +1,4 @@
+import { quotaDenied } from "@/lib/usage";
 import { apiAccessDenied } from "@/lib/access";
 import { readJson, safeError, sameOrigin } from "@/lib/guard";
 import { parseNativeGuidanceInput } from "@/lib/native-voice-contract";
@@ -10,6 +11,8 @@ export async function POST(request: Request) {
   if (!sameOrigin(request)) return safeError("Use speaking guidance from this app.", 403);
   const denied = await apiAccessDenied();
   if (denied) return denied;
+  const overAllowance = await quotaDenied("tutor_turns", 1);
+  if (overAllowance) return overAllowance;
   try {
     const body = await readJson(request, 65536);
     if (!body.input || typeof body.input !== "object" || Array.isArray(body.input))
