@@ -1302,3 +1302,15 @@ html[data-theme="dark"] .app-page::before {
 }
 .brand-logo-img { height: 64px; }
 @media (max-width: 700px) { .brand-logo-img { height: 48px; } }
+
+/* Photo background: /public/bg-city.png, with a tint so text stays readable. */
+.app-page::before {
+  background: linear-gradient(180deg, rgba(10, 8, 18, 0.55), rgba(10, 8, 18, 0.93)), url("/bg-city.png") center / cover no-repeat;
+}
+html[data-theme="light"] .app-page::before {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.95)), url("/bg-city.png") center / cover no-repeat;
+}
+.auth-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, rgba(10, 8, 18, 0.55), rgba(10, 8, 18, 0.93)), url("/bg-city.png") center / cover no-repeat fixed;
+}
