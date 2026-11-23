@@ -1,3 +1,4 @@
+import { quotaDenied } from "@/lib/usage";
 import { apiAccessDenied } from "@/lib/access";
 import { FishAudioError } from "fish-audio";
 import { generateSpeech, isFishReady, TranslationVoiceUnavailableError } from "@/lib/fish";
@@ -21,6 +22,8 @@ export async function POST(request: Request) {
   }
   const textError = speechTextError(body.text);
   if (textError) return safeError(textError);
+  const overAllowance = await quotaDenied("speech_chars", new TextEncoder().encode(String(body.text)).length);
+  if (overAllowance) return overAllowance;
   if (!isLanguage(body.language) || !isTutor(body.tutor))
     return safeError("Choose a language and tutor.");
   const model = body.model === undefined ? DEFAULT_SPEECH_MODEL : body.model;

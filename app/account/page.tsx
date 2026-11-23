@@ -4,6 +4,7 @@ import { BillingButtons } from "@/components/billing-buttons";
 import { priceIdFor } from "@/lib/billing/config";
 import { neonStore } from "@/lib/billing/store";
 import { sessionUser } from "@/lib/auth/session";
+import { MONTHLY_ALLOWANCE, USAGE_LABELS, usageFor, type UsageKind } from "@/lib/usage";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +19,13 @@ export default async function AccountPage() {
     subscription = await neonStore().activeSubscriptionFor(user.id);
   } catch {
     unavailable = true;
+  }
+
+  let usage: Record<UsageKind, number> | undefined;
+  try {
+    usage = await usageFor(user.id);
+  } catch {
+    usage = undefined;
   }
 
   const monthly = priceIdFor("month");
@@ -49,6 +57,18 @@ export default async function AccountPage() {
         )}
         <BillingButtons subscribed={!!subscription} />
       </section>
+      {subscription && usage && (
+        <section className="account-card">
+          <h2>This month</h2>
+          <ul className="usage-list">
+            {(Object.keys(MONTHLY_ALLOWANCE) as UsageKind[]).map((kind) => (
+              <li key={kind}>
+                {USAGE_LABELS[kind]}: {usage[kind]} of {MONTHLY_ALLOWANCE[kind]} used
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </main>
   );
 }

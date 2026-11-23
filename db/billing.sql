@@ -24,3 +24,12 @@ CREATE TABLE IF NOT EXISTS billing_risk_events (
   received_at timestamptz NOT NULL DEFAULT now(),
   reviewed boolean NOT NULL DEFAULT false
 );
+
+-- Monthly usage counts per subscriber, used to enforce the plan allowance.
+CREATE TABLE IF NOT EXISTS billing_usage (
+  user_id text NOT NULL,
+  period text NOT NULL,
+  kind text NOT NULL,
+  amount integer NOT NULL DEFAULT 0,
+  PRIMARY KEY (user_id, period, kind)
+);
