@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { AccountButton } from "@/components/account-button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import {
   ArrowLeft, ArrowRight,
@@ -612,6 +613,7 @@ export default function TutorApp() {
           <button className={tab === "continuous" ? "active" : ""} aria-pressed={tab === "continuous"} onClick={() => changeTab("continuous")}>Continuous chat</button>
         </nav>
         <div className="header-actions">
+          <AccountButton />
           <ThemeToggle />
           <SpeechModelSelect key={continuousChat ? "native" : "standard"} value={speechModel}
             allowedModels={continuousChat ? nativeSpeechModels : undefined} disabled={working || recording}
