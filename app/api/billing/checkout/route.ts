@@ -35,6 +35,8 @@ export async function POST(request: Request) {
     return Response.json({ url: session.url }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     if (error instanceof BillingUnavailableError) return safeError(error.message, 503);
+    const stripeError = error as { type?: string; code?: string };
+    console.error("Checkout failed:", stripeError.type ?? "unknown", stripeError.code ?? "none");
     return safeError("Checkout could not start. Please try again.", 502);
   }
 }
