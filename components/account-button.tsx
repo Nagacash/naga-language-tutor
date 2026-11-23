@@ -1,13 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth/client";
 
 // Header control: Sign out when a session exists, Sign in otherwise.
 export function AccountButton() {
-  const router = useRouter();
   const [email, setEmail] = useState<string | null | undefined>(undefined);
 
   useEffect(() => {
@@ -30,10 +28,11 @@ export function AccountButton() {
       title={`Signed in as ${email}`}
       onClick={async () => {
         const { error } = await authClient.signOut();
-        if (error) console.error("Sign-out failed", error.message);
-        setEmail(null);
-        router.refresh();
-        router.push("/");
+        if (error) {
+          window.alert("Sign-out failed: " + error.message);
+          return;
+        }
+        window.location.href = "/";
       }}
     >
       Sign out
