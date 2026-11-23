@@ -21,7 +21,9 @@ export function AccountButton() {
   if (!email) return <Link href="/auth/sign-in" className="header-preferences">Sign in</Link>;
 
   return (
-    <button
+    <>
+      <Link href="/account" className="header-preferences">Account</Link>
+      <button
       type="button"
       className="header-preferences"
       aria-label={`Sign out ${email}`}
@@ -37,5 +39,6 @@ export function AccountButton() {
     >
       Sign out
     </button>
+    </>
   );
 }

@@ -10,6 +10,12 @@ export type SubscriptionRecord = {
   currentPeriodEnd?: Date;
 };
 
+export type ActiveSubscription = {
+  status: string;
+  priceId?: string;
+  currentPeriodEnd?: Date;
+};
+
 export type RiskEvent = {
   eventId: string;
   type: string;
@@ -23,6 +29,7 @@ export interface BillingStore {
   linkCustomer(userId: string, customerId: string): Promise<void>;
   customerIdFor(userId: string): Promise<string | undefined>;
   userIdForCustomer(customerId: string): Promise<string | undefined>;
+  activeSubscriptionFor(userId: string): Promise<ActiveSubscription | undefined>;
   upsertSubscription(record: SubscriptionRecord): Promise<void>;
   recordRiskEvent(event: RiskEvent): Promise<void>;
 }
@@ -58,6 +65,17 @@ export function neonStore(): BillingStore {
         [customerId],
       );
       return rows[0]?.user_id;
+    },
+    async activeSubscriptionFor(userId) {
+      const { rows } = await db().query<{ status: string; price_id: string | null; current_period_end: Date | null }>(
+        `SELECT status, price_id, current_period_end FROM billing_subscriptions
+         WHERE user_id = $1 AND status IN ('active', 'trialing', 'past_due')
+         ORDER BY updated_at DESC LIMIT 1`,
+        [userId],
+      );
+      const row = rows[0];
+      if (!row) return undefined;
+      return { status: row.status, priceId: row.price_id ?? undefined, currentPeriodEnd: row.current_period_end ?? undefined };
     },
     async upsertSubscription(record) {
       await db().query(

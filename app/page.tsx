@@ -16,6 +16,7 @@ export default function Landing() {
         </p>
         <div className="landing-actions">
           <Link href="/app" className="landing-cta">Start practicing</Link>
+          <Link href="/account" className="landing-secondary">Plans and account</Link>
         </div>
       </section>
     </main>
