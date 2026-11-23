@@ -14,7 +14,7 @@ const config = {
   prompt: { system_prompt: "You are Sona, a language-practice assistant. Follow the session instructions, return only the requested JSON, and use fictional examples. Never request personal information.", first_message_mode: "off", first_message: "", first_message_prompt: "" },
   voice: { voice_id: "9a9cf47702da476aa4629e2506d4a857", speaking_language: "en", tts_model: "s2.1-pro", expressive: true },
   asr: { model: "fish_audio:transcribe-stream-1" },
-  llm: { model: "google/gemini-3.6-flash", fallback: { mode: "off" } },
+  llm: { model: "google/gemini-3.5-flash-lite", fallback: { mode: "off" } },
   conversation: { record_audio: false, reengage_enabled: false, hangup_farewell_mode: "off", max_duration_seconds: 600 },
   tools: { enabled: false, tool_ids: [], system_tools: { hang_up_call: false } },
   knowledge_base: { enabled: false, knowledge_source_ids: [] },

@@ -2,19 +2,23 @@ import { safeError } from "@/lib/guard";
 import { accessFor } from "@/lib/access";
 import { appQuery } from "@/lib/billing/store";
 
-export type UsageKind = "recordings" | "speech_chars" | "chat_sessions";
+export type UsageKind = "recordings" | "speech_chars" | "chat_sessions" | "tutor_turns" | "translations";
 
 // Monthly allowance for each subscriber. Admins are not limited.
 export const MONTHLY_ALLOWANCE: Record<UsageKind, number> = {
   recordings: 60, // each recording is at most 60 seconds, so this is at most 60 minutes
-  speech_chars: 150000, // spoken replies, counted in UTF-8 bytes
+  speech_chars: 100000, // spoken replies, counted in UTF-8 bytes
   chat_sessions: 3, // Continuous chat sessions, each at most 10 minutes
+  tutor_turns: 300, // tutor replies, including Continuous chat turns (Fish agent text)
+  translations: 300, // phrase translations (Fish agent text)
 };
 
 export const USAGE_LABELS: Record<UsageKind, string> = {
   recordings: "Recordings",
   speech_chars: "Spoken replies (characters)",
   chat_sessions: "Continuous chat sessions",
+  tutor_turns: "Tutor replies",
+  translations: "Translations",
 };
 
 export function currentPeriod(now = new Date()): string {
@@ -37,7 +41,7 @@ export async function reserveUsage(userId: string, kind: UsageKind, amount: numb
 }
 
 export async function usageFor(userId: string): Promise<Record<UsageKind, number>> {
-  const result: Record<UsageKind, number> = { recordings: 0, speech_chars: 0, chat_sessions: 0 };
+  const result = Object.fromEntries(Object.keys(MONTHLY_ALLOWANCE).map((kind) => [kind, 0])) as Record<UsageKind, number>;
   const { rows } = await appQuery<{ kind: UsageKind; amount: number }>(
     "SELECT kind, amount FROM billing_usage WHERE user_id = $1 AND period = $2",
     [userId, currentPeriod()],

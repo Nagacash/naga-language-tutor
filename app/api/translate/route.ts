@@ -1,3 +1,4 @@
+import { quotaDenied } from "@/lib/usage";
 import { apiAccessDenied } from "@/lib/access";
 import { readJson, safeError, sameOrigin } from "@/lib/guard";
 import { translatePhrase } from "@/lib/tutor";
@@ -10,6 +11,8 @@ export async function POST(request: Request) {
   if (!sameOrigin(request)) return safeError("Use translation from this app.", 403);
   const denied = await apiAccessDenied();
   if (denied) return denied;
+  const overAllowance = await quotaDenied("translations", 1);
+  if (overAllowance) return overAllowance;
   try {
     const input = parseTranslationInput(await readJson(request, 8192));
     return Response.json(await translatePhrase(input, request.signal), {
