@@ -1,3 +1,4 @@
+import { apiAccessDenied } from "@/lib/access";
 import { isFishReady, MAX_RECORDING_BYTES, transcribeRecording } from "@/lib/fish";
 import { boundedBody, safeError, sameOrigin } from "@/lib/guard";
 import { isLanguage } from "@/lib/types";
@@ -14,7 +15,9 @@ const acceptedTypes = new Set([
 ]);
 
 export async function POST(request: Request) {
-  if (!sameOrigin(request)) return safeError("Open this practice from Sona.", 403);
+  if (!sameOrigin(request)) return safeError("Open this practice from Naga Vox.", 403);
+  const denied = await apiAccessDenied();
+  if (denied) return denied;
   if (!isFishReady()) return safeError("The voice connection needs setup.", 503);
   const contentType = request.headers.get("Content-Type") ?? "";
   if (!contentType.toLowerCase().startsWith("multipart/form-data"))
@@ -39,8 +42,10 @@ export async function POST(request: Request) {
     return safeError("Use a WebM, MP4, WAV or Ogg audio recording.");
   try {
     const response = await transcribeRecording(audio, language, request.signal);
-    if (!response.ok)
+    if (!response.ok) {
+      console.error("Transcription upstream status:", response.status);
       return safeError("The recording could not be transcribed. Please try again.", 502);
+    }
     const result = await response.json();
     if (typeof result.text !== "string")
       return safeError("The transcript was unavailable. Please try again.", 502);

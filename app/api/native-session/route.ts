@@ -1,3 +1,4 @@
+import { apiAccessDenied } from "@/lib/access";
 import { readJson, safeError, sameOrigin } from "@/lib/guard";
 import { nativeVoiceSession } from "@/lib/tutor";
 import { parseNativeVoiceInput } from "@/lib/native-voice-contract";
@@ -8,6 +9,8 @@ export const maxDuration = 90;
 
 export async function POST(request: Request) {
   if (!sameOrigin(request)) return safeError("Start voice practice from this app.", 403);
+  const denied = await apiAccessDenied();
+  if (denied) return denied;
   try {
     const input = parseNativeVoiceInput(await readJson(request, 8192));
     return Response.json(await nativeVoiceSession(input, request.signal), { headers: { "Cache-Control": "no-store" } });

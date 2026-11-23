@@ -1,6 +1,6 @@
-# Fish Audio Language Tutor Demo
+# Naga Vox
 
-**Sona** is a language-practice app built with Next.js and Fish Audio. It combines guided lessons, phrase translation and a continuous voice conversation, with editable emotion cues and language-matched voices.
+**Naga Vox** is a language-practice app built with Next.js and Fish Audio. It combines guided lessons, phrase translation and a continuous voice conversation, with editable emotion cues and language-matched voices.
 
 ## What you can try
 
