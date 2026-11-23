@@ -7,7 +7,7 @@ export type UsageKind = "recordings" | "speech_chars" | "chat_sessions" | "tutor
 // Monthly allowance for each subscriber. Admins are not limited.
 export const MONTHLY_ALLOWANCE: Record<UsageKind, number> = {
   recordings: 60, // each recording is at most 60 seconds, so this is at most 60 minutes
-  speech_chars: 150000, // spoken replies, counted in UTF-8 bytes
+  speech_chars: 100000, // spoken replies, counted in UTF-8 bytes
   chat_sessions: 3, // Continuous chat sessions, each at most 10 minutes
   tutor_turns: 300, // tutor replies, including Continuous chat turns (Fish agent text)
   translations: 300, // phrase translations (Fish agent text)
